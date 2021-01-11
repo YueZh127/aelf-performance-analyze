@@ -37,10 +37,11 @@ fi
 
 # 筛选日志
 cd ${log_path}
-log_files=`ls -ltr | grep ^- |grep ".log" |awk '{print $9}'` #文件按时间倒序排序
-file = log_files[-1]
-#for file in ${log_files}
-#do
+#log_files=`ls -ltr | grep ^- |grep ".log" |awk '{print $9}'` #文件按时间倒序排序
+log_files=`ls -ltr | grep ^- |grep  ".log" |grep -v ".log.gz\|.log.1.gz" |awk '{print $9}'` #去当天未压缩文件
+
+for file in ${log_files}
+do
     echo "handle file: ${file}"
     grep "Generated block" ${log_path}/${file} |grep -v "grep" |awk '{print $1, $2, substr($11,2,64), $13, substr($16,2,64), $19, $23}' >>${data_path}/gen-blocks.log
     grep "Merging state" ${log_path}/${file} |grep -v "grep" |awk '{print $1, $2, $23, substr($21,2,64)}' >>${data_path}/lib-blocks.log
@@ -57,6 +58,6 @@ file = log_files[-1]
     if [[ ${count} > 0 ]];then
         echo "${file}  ${count}" >>${data_path}/bad-peer.log
     fi
-#done
+done
 echo "log handle completed"
 echo ""
