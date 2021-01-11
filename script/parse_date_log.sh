@@ -17,15 +17,15 @@ if [[ ${count} -eq 0 ]];then
 fi
 
 # 遍历文件夹,解压缩日志
-cd ${log_path}
-file_count=`ls |grep ".gz" |wc -l`
-if [[ ${file_count} > 0 ]];then
-    for file in ./*.gz
-    do
-        echo "uncompress file: ${file}"
-        gzip ${file} -d
-    done
-fi
+#cd ${log_path}
+#file_count=`ls |grep ".gz" |wc -l`
+#if [[ ${file_count} > 0 ]];then
+#    for file in ./*.gz
+#    do
+#        echo "uncompress file: ${file}"
+#        gzip ${file} -d
+#    done
+#fi
 
 echo "=>parse log: ${log_path}"
 data_path=${program_path}/log
@@ -38,8 +38,9 @@ fi
 # 筛选日志
 cd ${log_path}
 log_files=`ls -ltr | grep ^- |grep ".log" |awk '{print $9}'` #文件按时间倒序排序
-for file in ${log_files}
-do
+file = log_files[-1]
+#for file in ${log_files}
+#do
     echo "handle file: ${file}"
     grep "Generated block" ${log_path}/${file} |grep -v "grep" |awk '{print $1, $2, substr($11,2,64), $13, substr($16,2,64), $19, $23}' >>${data_path}/gen-blocks.log
     grep "Merging state" ${log_path}/${file} |grep -v "grep" |awk '{print $1, $2, $23, substr($21,2,64)}' >>${data_path}/lib-blocks.log
@@ -56,6 +57,6 @@ do
     if [[ ${count} > 0 ]];then
         echo "${file}  ${count}" >>${data_path}/bad-peer.log
     fi
-done
+#done
 echo "log handle completed"
 echo ""
