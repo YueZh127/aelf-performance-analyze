@@ -48,9 +48,16 @@ class BlockAnalyzer(object):
         start_time_str = (blocks[0]['time'])[:-2]
         end_time_str = (blocks[count - 1]['time'])[:-2]
         print('block time: {0}~{1}'.format(start_time_str, end_time_str))
+        if "." in start_time_str:
+            start_date = datetime.datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M:%S.%f')
+        else:
+            start_date = datetime.datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M:%S')
 
-        start_date = datetime.datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M:%S.%f')
-        end_date = datetime.datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M:%S.%f')
+        if "." in end_time_str:
+            end_date = datetime.datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M:%S.%f')
+        else:
+            end_date = datetime.datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M:%S')
+
         time_span = (end_date - start_date).seconds
         print('total {0} blocks executed transactions: {1}'.format(count, total_txs))
         print('average header_size/block: {0}'.format(round(total_headers_size / count, 2)))
